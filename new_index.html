@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Speak to AI</title>
+  <meta name="description" content="Turn messy AI chats into reusable prompts you can run again. A local-first distillation tool for builders, writers, and spec nerds." />
+  <meta name="theme-color" content="#222222" />
+
+  <meta property="og:title" content="Speak to AI" />
+  <meta property="og:description" content="Turn messy AI chats into reusable prompts you can run again." />
+  <meta property="og:type" content="website" />
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='24' fill='%23222222'/%3E%3Cpath d='M32 72c0-22 18-40 40-40 12 0 22 4 30 12' fill='none' stroke='%230075C2' stroke-width='10' stroke-linecap='round'/%3E%3Cpath d='M96 56c0 22-18 40-40 40-12 0-22-4-30-12' fill='none' stroke='%23DC3F00' stroke-width='10' stroke-linecap='round'/%3E%3Ccircle cx='44' cy='84' r='6' fill='%23ECBA00'/%3E%3Ccircle cx='84' cy='44' r='6' fill='%23B20B04'/%3E%3C/svg%3E" />
+
+  <style>
+    :root {
+      --stoai-red: #B20B04;
+      --stoai-orange: #DC3F00;
+      --stoai-gold: #ECBA00;
+      --stoai-blue: #0075C2;
+
+      --stoai-bg: #222222;
+      --stoai-surface-0: #1A1A1A;
+      --stoai-surface-1: #262626;
+      --stoai-surface-2: #2F2F2F;
+      --stoai-border: rgba(225,225,225,0.16);
+      --stoai-border-strong: rgba(225,225,225,0.26);
+
+      --stoai-fg: #E1E1E1;
+      --stoai-muted: rgba(225,225,225,0.78);
+      --stoai-muted-2: rgba(225,225,225,0.60);
+
+      --stoai-shadow: 0 14px 40px rgba(0,0,0,0.55);
+      --stoai-glow-orange: 0 0 0 3px rgba(220,63,0,0.20);
+      --stoai-glow-blue: 0 0 0 3px rgba(0,117,194,0.22);
+      --stoai-glow-gold: 0 0 0 3px rgba(236,186,0,0.22);
+
+      color-scheme: dark;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(0,117,194,0.14), transparent 55%),
+        radial-gradient(900px 500px at 80% 10%, rgba(220,63,0,0.12), transparent 60%),
+        radial-gradient(800px 420px at 40% 110%, rgba(236,186,0,0.10), transparent 65%),
+        var(--stoai-bg);
+      color: var(--stoai-fg);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(26,26,26,0.88), rgba(26,26,26,0.62));
+      border-bottom: 1px solid var(--stoai-border);
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 14px 16px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(145deg, rgba(47,47,47,0.9), rgba(26,26,26,0.9));
+      border: 1px solid var(--stoai-border);
+      box-shadow: var(--stoai-shadow);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .logo svg { width: 28px; height: 28px; }
+
+    .brand h1 {
+      font-size: 16px;
+      margin: 0;
+      letter-spacing: 0.2px;
+      font-weight: 850;
+    }
+
+    .brand .tag {
+      display: block;
+      margin-top: 2px;
+      font-size: 12px;
+      color: var(--stoai-muted);
+      font-weight: 600;
+    }
+
+    .nav {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .pill {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 7px 10px;
+      border: 1px solid var(--stoai-border);
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--stoai-muted);
+      background: rgba(26,26,26,0.55);
+      white-space: nowrap;
+    }
+
+    .btn {
+      border: 1px solid var(--stoai-border);
+      background: linear-gradient(180deg, rgba(47,47,47,0.82), rgba(26,26,26,0.82));
+      color: var(--stoai-fg);
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-weight: 750;
+      letter-spacing: 0.15px;
+      cursor: pointer;
+      transition: transform 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn:hover { transform: translateY(-1px); border-color: var(--stoai-border-strong); }
+
+    .btn.primary {
+      border-color: rgba(220,63,0,0.65);
+      background: linear-gradient(180deg, rgba(220,63,0,0.25), rgba(26,26,26,0.86));
+      box-shadow: var(--stoai-shadow);
+    }
+    .btn.primary:hover { box-shadow: var(--stoai-shadow), var(--stoai-glow-orange); }
+
+    .btn.blue {
+      border-color: rgba(0,117,194,0.70);
+      background: linear-gradient(180deg, rgba(0,117,194,0.22), rgba(26,26,26,0.86));
+    }
+    .btn.blue:hover { box-shadow: var(--stoai-glow-blue); }
+
+    .btn.gold {
+      border-color: rgba(236,186,0,0.72);
+      background: linear-gradient(180deg, rgba(236,186,0,0.20), rgba(26,26,26,0.86));
+    }
+    .btn.gold:hover { box-shadow: var(--stoai-glow-gold); }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 18px 16px 28px;
+    }
+
+    .hero {
+      display: grid;
+      gap: 14px;
+      padding: 22px 18px;
+      border-radius: 16px;
+      border: 1px solid var(--stoai-border);
+      background: linear-gradient(180deg, rgba(47,47,47,0.60), rgba(26,26,26,0.50));
+      box-shadow: var(--stoai-shadow);
+    }
+
+    .headline {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.07;
+      letter-spacing: 0.2px;
+      font-weight: 900;
+    }
+
+    .subhead {
+      margin: 0;
+      max-width: 72ch;
+      color: var(--stoai-muted);
+      font-size: 15px;
+      line-height: 1.45;
+      font-weight: 600;
+    }
+
+    .heroActions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    .micro {
+      color: var(--stoai-muted-2);
+      font-size: 12px;
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    .grid {
+      margin-top: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    @media (min-width: 980px) {
+      .grid { grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    .card {
+      border: 1px solid var(--stoai-border);
+      background: linear-gradient(180deg, rgba(47,47,47,0.55), rgba(26,26,26,0.45));
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      display: grid;
+      gap: 10px;
+      min-height: 160px;
+    }
+
+    .cardTitle {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 850;
+      letter-spacing: 0.2px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+
+    .dot.red { background: var(--stoai-red); }
+    .dot.orange { background: var(--stoai-orange); }
+    .dot.gold { background: var(--stoai-gold); }
+    .dot.blue { background: var(--stoai-blue); }
+
+    .cardText {
+      margin: 0;
+      color: var(--stoai-muted);
+      font-size: 13px;
+      line-height:
