@@ -1,8 +1,577 @@
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-<title>New Index</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Speak to AI</title>
+  <meta name="description" content="Turn messy AI chats into reusable prompts you can run again. A local-first distillation tool for builders, writers, and spec nerds." />
+  <meta name="theme-color" content="#222222" />
+
+  <meta property="og:title" content="Speak to AI" />
+  <meta property="og:description" content="Turn messy AI chats into reusable prompts you can run again." />
+  <meta property="og:type" content="website" />
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='24' fill='%23222222'/%3E%3Cpath d='M32 72c0-22 18-40 40-40 12 0 22 4 30 12' fill='none' stroke='%230075C2' stroke-width='10' stroke-linecap='round'/%3E%3Cpath d='M96 56c0 22-18 40-40 40-12 0-22-4-30-12' fill='none' stroke='%23DC3F00' stroke-width='10' stroke-linecap='round'/%3E%3Ccircle cx='44' cy='84' r='6' fill='%23ECBA00'/%3E%3Ccircle cx='84' cy='44' r='6' fill='%23B20B04'/%3E%3C/svg%3E" />
+
+  <style>
+    :root {
+      --stoai-red: #B20B04;
+      --stoai-orange: #DC3F00;
+      --stoai-gold: #ECBA00;
+      --stoai-blue: #0075C2;
+
+      --stoai-bg: #222222;
+      --stoai-surface-0: #1A1A1A;
+      --stoai-surface-1: #262626;
+      --stoai-surface-2: #2F2F2F;
+      --stoai-border: rgba(225,225,225,0.16);
+      --stoai-border-strong: rgba(225,225,225,0.26);
+
+      --stoai-fg: #E1E1E1;
+      --stoai-muted: rgba(225,225,225,0.78);
+      --stoai-muted-2: rgba(225,225,225,0.60);
+
+      --stoai-shadow: 0 14px 40px rgba(0,0,0,0.55);
+      --stoai-glow-orange: 0 0 0 3px rgba(220,63,0,0.20);
+      --stoai-glow-blue: 0 0 0 3px rgba(0,117,194,0.22);
+      --stoai-glow-gold: 0 0 0 3px rgba(236,186,0,0.22);
+
+      color-scheme: dark;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(0,117,194,0.14), transparent 55%),
+        radial-gradient(900px 500px at 80% 10%, rgba(220,63,0,0.12), transparent 60%),
+        radial-gradient(800px 420px at 40% 110%, rgba(236,186,0,0.10), transparent 65%),
+        var(--stoai-bg);
+      color: var(--stoai-fg);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(26,26,26,0.88), rgba(26,26,26,0.62));
+      border-bottom: 1px solid var(--stoai-border);
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 14px 16px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(145deg, rgba(47,47,47,0.9), rgba(26,26,26,0.9));
+      border: 1px solid var(--stoai-border);
+      box-shadow: var(--stoai-shadow);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .logo svg { width: 28px; height: 28px; }
+
+    .brand h1 {
+      font-size: 16px;
+      margin: 0;
+      letter-spacing: 0.2px;
+      font-weight: 850;
+    }
+
+    .brand .tag {
+      display: block;
+      margin-top: 2px;
+      font-size: 12px;
+      color: var(--stoai-muted);
+      font-weight: 600;
+    }
+
+    .nav {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .pill {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 7px 10px;
+      border: 1px solid var(--stoai-border);
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--stoai-muted);
+      background: rgba(26,26,26,0.55);
+      white-space: nowrap;
+    }
+
+    .btn {
+      border: 1px solid var(--stoai-border);
+      background: linear-gradient(180deg, rgba(47,47,47,0.82), rgba(26,26,26,0.82));
+      color: var(--stoai-fg);
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-weight: 750;
+      letter-spacing: 0.15px;
+      cursor: pointer;
+      transition: transform 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn:hover { transform: translateY(-1px); border-color: var(--stoai-border-strong); }
+
+    .btn.primary {
+      border-color: rgba(220,63,0,0.65);
+      background: linear-gradient(180deg, rgba(220,63,0,0.25), rgba(26,26,26,0.86));
+      box-shadow: var(--stoai-shadow);
+    }
+    .btn.primary:hover { box-shadow: var(--stoai-shadow), var(--stoai-glow-orange); }
+
+    .btn.blue {
+      border-color: rgba(0,117,194,0.70);
+      background: linear-gradient(180deg, rgba(0,117,194,0.22), rgba(26,26,26,0.86));
+    }
+    .btn.blue:hover { box-shadow: var(--stoai-glow-blue); }
+
+    .btn.gold {
+      border-color: rgba(236,186,0,0.72);
+      background: linear-gradient(180deg, rgba(236,186,0,0.20), rgba(26,26,26,0.86));
+    }
+    .btn.gold:hover { box-shadow: var(--stoai-glow-gold); }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 18px 16px 28px;
+    }
+
+    .hero {
+      display: grid;
+      gap: 14px;
+      padding: 22px 18px;
+      border-radius: 16px;
+      border: 1px solid var(--stoai-border);
+      background: linear-gradient(180deg, rgba(47,47,47,0.60), rgba(26,26,26,0.50));
+      box-shadow: var(--stoai-shadow);
+    }
+
+    .headline {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.07;
+      letter-spacing: 0.2px;
+      font-weight: 900;
+    }
+
+    .subhead {
+      margin: 0;
+      max-width: 72ch;
+      color: var(--stoai-muted);
+      font-size: 15px;
+      line-height: 1.45;
+      font-weight: 600;
+    }
+
+    .heroActions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    .micro {
+      color: var(--stoai-muted-2);
+      font-size: 12px;
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    .grid {
+      margin-top: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    @media (min-width: 980px) {
+      .grid { grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    .card {
+      border: 1px solid var(--stoai-border);
+      background: linear-gradient(180deg, rgba(47,47,47,0.55), rgba(26,26,26,0.45));
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      display: grid;
+      gap: 10px;
+      min-height: 160px;
+    }
+
+    .cardTitle {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 850;
+      letter-spacing: 0.2px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+
+    .dot.red { background: var(--stoai-red); }
+    .dot.orange { background: var(--stoai-orange); }
+    .dot.gold { background: var(--stoai-gold); }
+    .dot.blue { background: var(--stoai-blue); }
+
+    .cardText {
+      margin: 0;
+      color: var(--stoai-muted);
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 600;
+    }
+
+    .kbd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      border: 1px solid var(--stoai-border);
+      background: rgba(26,26,26,0.65);
+      border-radius: 10px;
+      padding: 2px 6px;
+      font-size: 12px;
+      color: var(--stoai-muted);
+      display: inline-block;
+    }
+
+    .section {
+      margin-top: 16px;
+      border: 1px solid var(--stoai-border);
+      background: linear-gradient(180deg, rgba(47,47,47,0.50), rgba(26,26,26,0.42));
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .section h2 {
+      margin: 0 0 8px 0;
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.2px;
+      color: var(--stoai-gold);
+    }
+
+    .section p {
+      margin: 0;
+      color: var(--stoai-muted);
+      font-size: 13px;
+      line-height: 1.5;
+      font-weight: 600;
+      max-width: 95ch;
+    }
+
+    .formRow {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    input[type="email"]{
+      flex: 1 1 260px;
+      min-width: 220px;
+      padding: 11px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--stoai-border);
+      background: rgba(26,26,26,0.70);
+      color: var(--stoai-fg);
+      outline: none;
+      font-weight: 650;
+    }
+
+    input[type="email"]:focus {
+      border-color: rgba(0,117,194,0.75);
+      box-shadow: var(--stoai-glow-blue);
+    }
+
+    .noteRow {
+      margin-top: 8px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+
+    .tiny {
+      font-size: 12px;
+      color: var(--stoai-muted-2);
+      font-weight: 600;
+      margin: 0;
+    }
+
+    footer {
+      border-top: 1px solid var(--stoai-border);
+      background: rgba(26,26,26,0.55);
+      margin-top: 18px;
+    }
+
+    .footWrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 14px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .link {
+      padding: 7px 10px;
+      border: 1px solid var(--stoai-border);
+      border-radius: 999px;
+      background: rgba(26,26,26,0.55);
+      color: var(--stoai-muted);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: border-color 120ms ease;
+    }
+
+    .link:hover { border-color: var(--stoai-border-strong); }
+
+    .toast {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      max-width: 520px;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--stoai-border);
+      background: rgba(26,26,26,0.88);
+      box-shadow: var(--stoai-shadow);
+      color: var(--stoai-muted);
+      font-size: 13px;
+      line-height: 1.35;
+      display: none;
+    }
+
+    .toast strong { color: var(--stoai-fg); }
+  </style>
 </head>
+
 <body>
-<h1>Welcome to the New Index Page!</h1>
+  <header>
+    <div class="wrap">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+            <path d="M32 72c0-22 18-40 40-40 12 0 22 4 30 12" fill="none" stroke="#0075C2" stroke-width="10" stroke-linecap="round"/>
+            <path d="M96 56c0 22-18 40-40 40-12 0-22-4-30-12" fill="none" stroke="#DC3F00" stroke-width="10" stroke-linecap="round"/>
+            <circle cx="44" cy="84" r="6" fill="#ECBA00"/>
+            <circle cx="84" cy="44" r="6" fill="#B20B04"/>
+          </svg>
+        </div>
+        <div>
+          <h1>Speak to AI <span class="tag">Distillation Engine</span></h1>
+        </div>
+      </div>
+
+      <div class="nav">
+        <span class="pill">Local-first • No tracking</span>
+        <a class="btn blue" href="speaktoai.html">Open the Tool</a>
+        <a class="btn primary" href="speaktoai.html#start">Start Distilling</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h2 class="headline">Turn messy AI chats into reusable prompts you can run again.</h2>
+      <p class="subhead">
+        Speak to AI is a local-first distillation workflow for builders. Paste the chaos, keep the gold, and generate a stable execution prompt that survives a fresh chat.
+      </p>
+
+      <div class="heroActions">
+        <a class="btn primary" href="speaktoai.html">Launch Speak to AI</a>
+        <button class="btn gold" id="copyStoaiBtn" type="button">Copy /stoai Snippet</button>
+        <button class="btn" id="howBtn" type="button">How it Works</button>
+      </div>
+
+      <p class="micro">
+        Pro tip: paste only the smallest chunk of conversation that still contains the decisions, then include the best output as the target.
+      </p>
+    </section>
+
+    <section class="grid" aria-label="Key benefits">
+      <div class="card">
+        <h3 class="cardTitle"><span class="dot gold"></span> Insight, not scroll</h3>
+        <p class="cardText">Extract constraints and decisions explicitly so they stop evaporating inside the chat history.</p>
+        <p class="cardText">Output includes a “Stable Execution Prompt” you can reuse in a clean session.</p>
+      </div>
+
+      <div class="card">
+        <h3 class="cardTitle"><span class="dot blue"></span> Built for repeatability</h3>
+        <p class="cardText">Works for Code Generation, Creative Writing, and Technical Specs by changing the required output structure.</p>
+        <p class="cardText">You get verification steps, drift correction, and a reproducibility mindset.</p>
+      </div>
+
+      <div class="card">
+        <h3 class="cardTitle"><span class="dot orange"></span> Looks like a product</h3>
+        <p class="cardText">A consistent interface language and palette so every tool you publish feels like part of a system.</p>
+        <p class="cardText">Deploy free now. Monetize later without rebuilding the front-end.</p>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <h2>How it works</h2>
+      <p>
+        Step 1: Paste conversation chaos and the best output you want to reproduce. Step 2: Pick a platform and scenario. Step 3: Generate a distillation prompt, paste it into your AI, and save the returned “Stable Execution Prompt” as your durable template.
+        If you want muscle memory, use <span class="kbd">/stoai</span> before you start.
+      </p>
+    </section>
+
+    <section class="section" id="future">
+      <h2>Future monetization friendly</h2>
+      <p>
+        Today: static tool, zero backend, professional feel. Tomorrow: add a Pro tier with saved sessions, exports, team templates, or a hosted “prompt vault.”
+        This index page is already structured for that evolution.
+      </p>
+
+      <div class="formRow" style="margin-top:12px;">
+        <input id="email" type="email" placeholder="Optional: email for early access to Pro features" autocomplete="email" />
+        <button class="btn primary" id="notifyBtn" type="button">Notify Me</button>
+      </div>
+
+      <div class="noteRow">
+        <p class="tiny">No automatic submission here. This stays local unless you choose to send it.</p>
+        <p class="tiny">Want real capture later? Add a backend endpoint or a form service when you’re ready.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footWrap">
+      <div class="links">
+        <a class="link" href="speaktoai.html">Tool</a>
+        <button class="link" id="copyLinkBtn" type="button">Copy Tool Link</button>
+        <button class="link" id="copyPaletteBtn" type="button">Copy Palette</button>
+      </div>
+      <div class="tiny">Speak to AI Palette: #B20B04 • #DC3F00 • #ECBA00 • #0075C2 • #E1E1E1 • #222222</div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const toastEl = document.getElementById("toast");
+
+    function toast(msg) {
+      toastEl.innerHTML = msg;
+      toastEl.style.display = "block";
+      clearTimeout(toastEl._t);
+      toastEl._t = setTimeout(() => { toastEl.style.display = "none"; }, 2600);
+    }
+
+    async function copyText(text, okMsg) {
+      try {
+        await navigator.clipboard.writeText(text);
+        toast(okMsg || "<strong>Copied.</strong> Ready to paste.");
+      } catch (e) {
+        toast("<strong>Copy failed.</strong> Your browser blocked clipboard access.");
+      }
+    }
+
+    document.getElementById("howBtn").addEventListener("click", () => {
+      document.getElementById("how").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    document.getElementById("copyLinkBtn").addEventListener("click", async () => {
+      const url = new URL("speaktoai.html", window.location.href).toString();
+      copyText(url, "<strong>Copied.</strong> Tool link is on your clipboard.");
+    });
+
+    document.getElementById("copyPaletteBtn").addEventListener("click", async () => {
+      const palette = [
+        "Speak to AI Palette",
+        "Red: #B20B04",
+        "Orange: #DC3F00",
+        "Gold: #ECBA00",
+        "Blue: #0075C2",
+        "Text: #E1E1E1",
+        "Background: #222222"
+      ].join("\\n");
+      copyText(palette, "<strong>Copied.</strong> Palette copied.");
+    });
+
+    document.getElementById("copyStoaiBtn").addEventListener("click", async () => {
+      const stoai = [
+        "/stoai",
+        "",
+        "Use the Speak to AI palette and tone.",
+        "",
+        "COLOR SEMANTICS:",
+        "Red (#B20B04): Risk, failure, constraints",
+        "Orange (#DC3F00): Action, momentum, execution",
+        "Gold (#ECBA00): Insight, decisions, highlights",
+        "Blue (#0075C2): Logic, structure, system rules",
+        "",
+        "STYLE RULES:",
+        "Write like a systems architect. Convert chaos into structure. Highlight decision points. Reduce ambiguity.",
+        "Output should be concise, operational, repeatable, and designed for reuse."
+      ].join("\\n");
+      copyText(stoai, "<strong>Copied.</strong> /stoai snippet is ready.");
+    });
+
+    document.getElementById("notifyBtn").addEventListener("click", () => {
+      const email = (document.getElementById("email").value || "").trim();
+      const subject = encodeURIComponent("Speak to AI: notify me about Pro features");
+      const body = encodeURIComponent(
+        "Email: " + (email || "[not provided]") + "\\n\\n" +
+        "I want to hear when Speak to AI adds: saved sessions, exports, prompt vault, or team templates."
+      );
+      window.location.href = "mailto:?subject=" + subject + "&body=" + body;
+      toast("<strong>Opened email draft.</strong> Send it if you want updates.");
+    });
+  </script>
 </body>
 </html>
