@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Speak to AI</title>
+
+<style>
+
+/* ===========================
+   SPEAK TO AI PALETTE
+=========================== */
+
+:root {
+--stoai-red: #B20B04;
+--stoai-orange: #DC3F00;
+--stoai-gold: #ECBA00;
+--stoai-blue: #0075C2;
+
+--stoai-bg: #222222;
+--stoai-surface: #2A2A2A;
+--stoai-border: #3A3A3A;
+--stoai-text: #E1E1E1;
+--stoai-muted: #9C9C9C;
+}
+
+/* ===========================
+   GLOBAL
+=========================== */
+
+body {
+margin:0;
+font-family: system-ui, -apple-system, Segoe UI;
+background: var(--stoai-bg);
+color: var(--stoai-text);
+}
+
+/* ===========================
+   LAYOUT
+=========================== */
+
+header {
+padding:20px;
+background:#1A1A1A;
+border-bottom:1px solid var(--stoai-border);
+text-align:center;
+}
+
+main {
+max-width:1100px;
+margin:auto;
+padding:20px;
+}
+
+.panel {
+background: var(--stoai-surface);
+border:1px solid var(--stoai-border);
+border-radius:10px;
+padding:16px;
+margin-bottom:20px;
+}
+
+textarea,input,select {
+width:100%;
+padding:10px;
+margin-top:6px;
+margin-bottom:12px;
+background:#1A1A1A;
+color:var(--stoai-text);
+border:1px solid var(--stoai-border);
+border-radius:6px;
+}
+
+label { color: var(--stoai-gold); font-weight:600; }
+
+.pill {
+display:inline-block;
+padding:6px 12px;
+border:1px solid var(--stoai-border);
+border-radius:999px;
+margin-top:10px;
+}
+
+/* ===========================
+   CTA SYSTEM
+=========================== */
+
+.stoai-cta {
+padding:10px 16px;
+border-radius:8px;
+font-weight:600;
+border:1px solid transparent;
+cursor:pointer;
+margin:4px;
+}
+
+.stoai-action { background:var(--stoai-orange); color:#fff; }
+.stoai-logic { background:var(--stoai-blue); color:#fff; }
+.stoai-insight { background:var(--stoai-gold); color:#222; }
+.stoai-risk { background:var(--stoai-red); color:#fff; }
+
+.stoai-cta:hover { opacity:0.9; }
+
+/* ===========================
+   LOADING
+=========================== */
+
+.stoai-loading {
+position:relative;
+pointer-events:none;
+}
+
+.stoai-loading::after {
+content:"";
+position:absolute;
+right:10px;
+top:50%;
+width:14px;
+height:14px;
+border-radius:50%;
+border:2px solid rgba(255,255,255,0.3);
+border-top-color: var(--stoai-orange);
+animation: spin 0.8s linear infinite;
+transform: translateY(-50%);
+}
+
+@keyframes spin {
+to { transform: translateY(-50%) rotate(360deg); }
+}
+
+/* ===========================
+   BUTTON GROUPS
+=========================== */
+
+.btnbar button {
+padding:6px 10px;
+border-radius:999px;
+border:1px solid var(--stoai-border);
+background:#1A1A1A;
+color:var(--stoai-text);
+cursor:pointer;
+}
+
+.btnbar button.active {
+border-color:var(--stoai-orange);
+box-shadow:0 0 6px rgba(220,63,0,0.5);
+}
+
+/* ===========================
+   FOOTER
+=========================== */
+
+footer {
+text-align:center;
+padding:20px;
+border-top:1px solid var(--stoai-border);
+background:#1A1A1A;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Speak to AI</h1>
+<div class="pill">Distillation Engine</div>
+</header>
+
+<main>
+
+<div class="panel">
+
+<h3>Platform</h3>
+<div class="btnbar" id="platformButtons">
+<button data-platform="ChatGPT">ChatGPT</button>
+<button data-platform="Gemini">Gemini</button>
+<button data-platform="Claude">Claude</button>
+<button data-platform="Grok">Grok</button>
+<button data-platform="Other">Other</button>
+</div>
+
+<h3>Scenario</h3>
+<div class="btnbar" id="scenarioButtons">
+<button data-scenario="general">General</button>
+<button data-scenario="code">Code</button>
+<button data-scenario="creative">Creative</button>
+<button data-scenario="spec">Spec</button>
+</div>
+
+</div>
+
+<div class="panel">
+<label>Goal</label>
+<input id="goal">
+
+<label>Conversation Chaos</label>
+<textarea id="context"></textarea>
+
+<label>Best Output</label>
+<textarea id="output"></textarea>
+
+<label>Constraints</label>
+<textarea id="constraints"></textarea>
+</div>
+
+<div class="panel">
+
+<button id="buildBtn" class="stoai-cta stoai-insight">
+Distill Context
+</button>
+
+<button id="copyBtn" class="stoai-cta stoai-logic">
+Copy Prompt
+</button>
+
+<button id="clearBtn" class="stoai-cta stoai-risk">
+Reset Chaos
+</button>
+
+</div>
+
+<div class="panel">
+<label>Distilled Prompt</label>
+<textarea id="result" readonly></textarea>
+</div>
+
+</main>
+
+<footer>
+Speak to AI Interface
+</footer>
+
+<script>
+
+let state = { platform:"", scenario:"general" }
+
+document.querySelectorAll("#platformButtons button").forEach(btn=>{
+btn.onclick=()=>{
+state.platform=btn.dataset.platform
+document.querySelectorAll("#platformButtons button").forEach(b=>b.classList.remove("active"))
+btn.classList.add("active")
+}
+})
+
+document.querySelectorAll("#scenarioButtons button").forEach(btn=>{
+btn.onclick=()=>{
+state.scenario=btn.dataset.scenario
+document.querySelectorAll("#scenarioButtons button").forEach(b=>b.classList.remove("active"))
+btn.classList.add("active")
+}
+})
+
+function buildPrompt(){
+return `
+You are a systems architect.
+
+Platform: ${state.platform}
+Scenario: ${state.scenario}
+
+Goal:
+${goal.value}
+
+Constraints:
+${constraints.value}
+
+Conversation:
+${context.value}
+
+Best Output:
+${output.value}
+
+Create:
+1. Core Objective
+2. Constraints
+3. Decisions
+4. Reusable Execution Prompt
+5. Verification Checklist
+`
+}
+
+buildBtn.onclick=()=>{
+
+buildBtn.classList.add("stoai-loading")
+buildBtn.innerText="Distilling..."
+
+setTimeout(()=>{
+result.value = buildPrompt()
+buildBtn.classList.remove("stoai-loading")
+buildBtn.innerText="Distill Context"
+},600)
+
+}
+
+copyBtn.onclick=()=>{
+navigator.clipboard.writeText(result.value)
+}
+
+clearBtn.onclick=()=>{
+goal.value=""
+context.value=""
+output.value=""
+constraints.value=""
+result.value=""
+}
+
+</script>
+
+</body>
+</html>
