@@ -1,4 +1,4 @@
-# Speak to AI
+# "Speak to AI"
 
 ## A practical prompt framework for better conversations with artificial intelligence
 
@@ -7,7 +7,7 @@
 A polyglot's perspective following a paralyzing stroke that made me rely on AI for survival and making AI work with tech for physical assistance. 
 Real automation with AI when it is a matter or survival.
 
-# Speak to AI
+# "Speak to AI"
 
 ## A polyglot’s survival-built framework for making artificial intelligence useful, accurate, and actionable.
 
