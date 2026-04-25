@@ -81,3 +81,82 @@ Return the answer in this structure.
 
 Quality Check:
 Before finalizing, check for missing facts, unsupported claims, and unclear wording.
+
+Who This Is For
+
+Speak to AI is designed for:
+
+attorneys,
+paralegals,
+small business owners,
+students,
+writers,
+developers,
+researchers,
+consultants,
+and anyone who wants AI to produce more reliable work.
+What Speak to AI Helps With
+
+Speak to AI can improve prompts for:
+
+Use Case	Example
+Legal Drafting	Motions, briefs, discovery, proposed orders
+Business Writing	SOPs, policies, website copy, client letters
+Coding	Debugging, feature planning, app scaffolding
+Research	Source comparison, issue spotting, summaries
+Education	Study guides, explanations, teaching outlines
+Operations	Workflow design, automation planning, checklists
+Marketing	SEO briefs, service pages, content plans
+The Core Rule
+
+A good AI prompt should tell the system:
+
+What role to play.
+What job to perform.
+What facts to use.
+What rules to follow.
+What format to return.
+What mistakes to avoid.
+How to check the final answer.
+
+That is the heart of Speak to AI.
+
+Mini 11S Checklist
+
+Before submitting a prompt, ask:
+
+Did I define the role?
+Did I define the task?
+Did I provide enough context?
+Did I give the AI a clear format?
+Did I identify the audience?
+Did I include the source material?
+Did I tell it what not to do?
+Did I require a quality check?
+Did I ask for the right tone?
+Did I set the proper scope?
+Did I test the prompt for ambiguity?
+Project Mission
+
+The mission of Speak to AI is to make prompt writing more understandable, more repeatable, and more useful.
+
+AI should not be treated like magic.
+
+It should be treated like a powerful assistant that performs better when the instructions are clear.
+
+Suggested Next Pages
+
+Future versions of this project may include:
+
+Page	Purpose
+/examples	Sample prompts for law, business, writing, coding, and research
+/templates	Reusable 11S prompt templates
+/checklists	Prompt quality checklists
+/legal-prompts	Legal drafting prompt patterns
+/coding-prompts	Software and automation prompt patterns
+/training	Lessons for learning how to Speak to AI
+Basic Website Footer
+
+"Speak to AI"
+Built around the 11S Method.
+Clearer prompts. Better REASONED OUTPUT.
