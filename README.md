@@ -2,10 +2,24 @@
 
 ## A practical prompt framework for better conversations with artificial intelligence
 
-**Speak to AI** is a plain-language method for helping people get better answers from AI tools by giving clearer instructions, better context, and stronger quality controls.
+**Speak to AI** is a plain-language method for helping people get better answers from AI tools by giving clearer instructions, better context, and stronger quality controls. 
+
+A polyglot's perspective following a paralyzing stroke that made me rely on AI for survival and making AI work with tech for physical assistance. 
+Real automation with AI when it is a matter or survival.
+
+# Speak to AI
+
+## A polyglot’s survival-built framework for making artificial intelligence useful, accurate, and actionable.
+
+After a paralyzing stroke, AI became more than a productivity tool. It became a communication bridge, a planning assistant, a legal research partner,
+a memory aid, and a way to connect technology to physical survival.
+
+Speak to AI teaches people how to give AI better instructions through the 11S Method, so the output becomes clearer, safer, and more useful.
 
 At the center of the method is **11S**, a prompt-building framework designed to make AI requests more accurate, reusable, and easier to improve.
 
+Speak to AI is a survival-built prompt framework created from the perspective of a polyglot after a paralyzing stroke made artificial intelligence 
+necessary for communication, physical assistance, legal survival, automation, and daily independence.
 ---
 
 ## What Is 11S?
