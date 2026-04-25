@@ -160,16 +160,6 @@ It should be treated like a powerful assistant that performs better when the ins
 
 Suggested Next Pages
 
-Future versions of this project may include:
-
-Page	Purpose
-/examples	Sample prompts for law, business, writing, coding, and research
-/templates	Reusable 11S prompt templates
-/checklists	Prompt quality checklists
-/legal-prompts	Legal drafting prompt patterns
-/coding-prompts	Software and automation prompt patterns
-/training	Lessons for learning how to Speak to AI
-Basic Website Footer
 
 "Speak to AI"
 Built around the 11S Method.
